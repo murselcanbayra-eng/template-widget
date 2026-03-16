@@ -670,10 +670,18 @@
             padding:3px 11px; border-radius:12px; font-size:11px; font-weight:700;
             border:1.5px solid var(--border); background:var(--accent); color:white;
             cursor:pointer; font-family:var(--font); transition:all .2s;" class="net-chart-btn">TYT</button>
-          <button onclick="setNetChartType('ayt',this)" style="
+          <button onclick="setNetChartType('ayt_say',this)" style="
             padding:3px 11px; border-radius:12px; font-size:11px; font-weight:700;
             border:1.5px solid var(--border); background:var(--surface2); color:var(--text3);
-            cursor:pointer; font-family:var(--font); transition:all .2s;" class="net-chart-btn">AYT</button>
+            cursor:pointer; font-family:var(--font); transition:all .2s;" class="net-chart-btn">SAY</button>
+          <button onclick="setNetChartType('ayt_ea',this)" style="
+            padding:3px 11px; border-radius:12px; font-size:11px; font-weight:700;
+            border:1.5px solid var(--border); background:var(--surface2); color:var(--text3);
+            cursor:pointer; font-family:var(--font); transition:all .2s;" class="net-chart-btn">EA</button>
+          <button onclick="setNetChartType('ayt_soz',this)" style="
+            padding:3px 11px; border-radius:12px; font-size:11px; font-weight:700;
+            border:1.5px solid var(--border); background:var(--surface2); color:var(--text3);
+            cursor:pointer; font-family:var(--font); transition:all .2s;" class="net-chart-btn">SÖZ</button>
         </div>
       </div>
       <div id="dash-net-chart-wrap" style="position:relative;">
@@ -706,7 +714,23 @@
         <div id="tyt-ders-progress"></div>
       </div>
       <div class="dash-prog-card">
-        <div class="dash-prog-title">📙 AYT SAY Konu İlerlemesi</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <div class="dash-prog-title" style="margin-bottom:0">📗 AYT Konu İlerlemesi</div>
+          <div style="display:flex; gap:5px;">
+            <button onclick="setAytProg('ayt_ea',this)" data-alan="ayt_ea" style="
+              padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700;
+              border:1.5px solid var(--border); background:var(--accent3); color:white;
+              cursor:pointer; font-family:var(--font); transition:all .2s;" class="ayt-prog-btn">EA</button>
+            <button onclick="setAytProg('ayt_say',this)" data-alan="ayt_say" style="
+              padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700;
+              border:1.5px solid var(--border); background:var(--surface2); color:var(--text3);
+              cursor:pointer; font-family:var(--font); transition:all .2s;" class="ayt-prog-btn">SAY</button>
+            <button onclick="setAytProg('ayt_soz',this)" data-alan="ayt_soz" style="
+              padding:3px 9px; border-radius:12px; font-size:11px; font-weight:700;
+              border:1.5px solid var(--border); background:var(--surface2); color:var(--text3);
+              cursor:pointer; font-family:var(--font); transition:all .2s;" class="ayt-prog-btn">SÖZ</button>
+          </div>
+        </div>
         <div class="dash-prog-ring-wrap">
           <svg width="72" height="72" viewBox="0 0 72 72">
             <circle cx="36" cy="36" r="28" fill="none" stroke="var(--ring-track)" stroke-width="8"/>
@@ -731,7 +755,9 @@
     </div>
     <div class="kt-tabs">
       <button class="kt-tab active" data-tab="tyt" onclick="ktShowTab('tyt',this)">📘 TYT</button>
+      <button class="kt-tab" data-tab="ayt_ea" onclick="ktShowTab('ayt_ea',this)">📗 AYT — EA</button>
       <button class="kt-tab" data-tab="ayt_say" onclick="ktShowTab('ayt_say',this)">📙 AYT — SAY</button>
+      <button class="kt-tab" data-tab="ayt_soz" onclick="ktShowTab('ayt_soz',this)">📕 AYT — SÖZ</button>
     </div>
     <div id="kt-content"></div>
   </div>
@@ -833,7 +859,9 @@
             <label class="form-label">Sınav Türü</label>
             <select class="form-select" id="net-type" onchange="renderNetInputs()">
               <option value="tyt">TYT</option>
-              <option value="ayt">AYT</option>
+              <option value="ayt_say">AYT — SAY</option>
+              <option value="ayt_ea">AYT — EA</option>
+              <option value="ayt_soz">AYT — SÖZ</option>
             </select>
           </div>
           <div class="form-group" style="margin-bottom:12px">
@@ -929,11 +957,18 @@ const SUBJECTS = [
   { id: 'tyt-fiz',   name: 'TYT Fizik',          color: '#6dbb8a', type: 'TYT' },
   { id: 'tyt-kim',   name: 'TYT Kimya',          color: '#a8c96a', type: 'TYT' },
   { id: 'tyt-bio',   name: 'TYT Biyoloji',       color: '#7dc98a', type: 'TYT' },
+  // AYT SAY
   { id: 'ayt-mat',   name: 'AYT Matematik',      color: '#e8a06a', type: 'AYT' },
   { id: 'ayt-geo',   name: 'AYT Geometri',       color: '#b07ad9', type: 'AYT' },
   { id: 'ayt-fiz',   name: 'AYT Fizik',          color: '#5ec4a0', type: 'AYT' },
   { id: 'ayt-kim',   name: 'AYT Kimya',          color: '#8bc96a', type: 'AYT' },
   { id: 'ayt-bio',   name: 'AYT Biyoloji',       color: '#6dbb8a', type: 'AYT' },
+  // AYT EA / SÖZ
+  { id: 'ayt-edeb',  name: 'AYT Edebiyat',       color: '#d98a6a', type: 'AYT' },
+  { id: 'ayt-tar',   name: 'AYT Tarih',          color: '#e07888', type: 'AYT' },
+  { id: 'ayt-cog',   name: 'AYT Coğrafya',       color: '#58b998', type: 'AYT' },
+  { id: 'ayt-fel',   name: 'AYT Felsefe',        color: '#a78bfa', type: 'AYT' },
+  { id: 'ayt-din',   name: 'AYT Din Kültürü',    color: '#f0b460', type: 'AYT' },
 ];
 
 const TYT_NETS = [
@@ -947,13 +982,34 @@ const TYT_NETS = [
   { id: 'tyt-fel',  label: 'Felsefe',    max: 5  },
   { id: 'tyt-din',  label: 'Din Kül.',   max: 5  },
 ];
-const AYT_NETS = [
+const AYT_NETS_SAY = [
   { id: 'ayt-mat',  label: 'Matematik',  max: 30 },
   { id: 'ayt-geo',  label: 'Geometri',   max: 10 },
   { id: 'ayt-fiz',  label: 'Fizik',      max: 14 },
   { id: 'ayt-kim',  label: 'Kimya',      max: 13 },
   { id: 'ayt-bio',  label: 'Biyoloji',   max: 13 },
 ];
+const AYT_NETS_EA = [
+  { id: 'ayt-edeb', label: 'Edebiyat',   max: 24 },
+  { id: 'ayt-mat',  label: 'Matematik',  max: 30 },
+  { id: 'ayt-geo',  label: 'Geometri',   max: 10 },
+  { id: 'ayt-tar',  label: 'Tarih-1',    max: 10 },
+  { id: 'ayt-cog',  label: 'Coğrafya-1', max: 6  },
+];
+const AYT_NETS_SOZ = [
+  { id: 'ayt-edeb', label: 'Edebiyat',   max: 24 },
+  { id: 'ayt-tar',  label: 'Tarih-1',    max: 10 },
+  { id: 'ayt-cog',  label: 'Coğrafya-1', max: 6  },
+  { id: 'ayt-fel',  label: 'Felsefe Gr.', max: 12 },
+  { id: 'ayt-din',  label: 'Din Kül.',   max: 6  },
+];
+// Geriye dönük uyumluluk için alias
+const AYT_NETS = AYT_NETS_SAY;
+function getAytNets(subtype) {
+  if (subtype === 'ea') return AYT_NETS_EA;
+  if (subtype === 'soz') return AYT_NETS_SOZ;
+  return AYT_NETS_SAY;
+}
 
 const WEEKLY_PROGRAM = {
   Pazartesi: [
@@ -1091,8 +1147,13 @@ function fillKonuDropdown(selectId, subjectId) {
   const allDers = [
     ...(KONU_DATA.tyt || []),
     ...(KONU_DATA.ayt_say || []),
+    ...(KONU_DATA.ayt_ea || []),
+    ...(KONU_DATA.ayt_soz || []),
   ];
-  const ders = allDers.find(d => d.id === subjectId);
+  // Deduplicate by id (same ders may appear in multiple areas)
+  const seen = new Set();
+  const uniqueDers = allDers.filter(d => { if (seen.has(d.id)) return false; seen.add(d.id); return true; });
+  const ders = uniqueDers.find(d => d.id === subjectId);
   if (!ders) return;
   ders.konular.forEach(k => {
     const opt = document.createElement('option');
@@ -1298,9 +1359,16 @@ function calcNet(dogru, yanlis) {
   return Math.max(0, dogru - yanlis / 3);
 }
 
+function getNetFields(type) {
+  if (type === 'tyt') return TYT_NETS;
+  if (type === 'ayt_ea') return AYT_NETS_EA;
+  if (type === 'ayt_soz') return AYT_NETS_SOZ;
+  return AYT_NETS_SAY; // ayt_say or legacy 'ayt'
+}
+
 function renderNetInputs() {
   const type = document.getElementById('net-type').value;
-  const fields = type === 'tyt' ? TYT_NETS : AYT_NETS;
+  const fields = getNetFields(type);
   document.getElementById('net-inputs').innerHTML = `
     <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px;">
       ${fields.map(f => `
@@ -1334,7 +1402,7 @@ function renderNetInputs() {
 }
 
 function updateNetPreview(fid, max) {
-  const fields = document.getElementById('net-type').value === 'tyt' ? TYT_NETS : AYT_NETS;
+  const fields = getNetFields(document.getElementById('net-type').value);
   const d = parseFloat(document.getElementById(`net-d-${fid}`)?.value) || 0;
   const y = parseFloat(document.getElementById(`net-y-${fid}`)?.value) || 0;
   const net = calcNet(d, y);
@@ -1358,7 +1426,7 @@ function addNet() {
   const type = document.getElementById('net-type').value;
   const date = document.getElementById('net-date').value || today();
   const name = document.getElementById('net-name').value.trim() || 'Deneme';
-  const fields = type === 'tyt' ? TYT_NETS : AYT_NETS;
+  const fields = getNetFields(type);
   const scores = {};
   const raw = {}; // doğru/yanlış ham veriler
   fields.forEach(f => {
@@ -1395,7 +1463,7 @@ function renderNets() {
   const nets = load('nets');
   const el = document.getElementById('net-list');
   if (!nets.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🎯</div>Henüz deneme kaydı yok</div>'; return; }
-  const allFields = { tyt: TYT_NETS, ayt: AYT_NETS };
+  const allFields = { tyt: TYT_NETS, ayt_say: AYT_NETS_SAY, ayt: AYT_NETS_SAY, ayt_ea: AYT_NETS_EA, ayt_soz: AYT_NETS_SOZ };
 
   // Toplam net satırı
   const grandTotal = nets.reduce((a, n) => a + (n.total || 0), 0);
@@ -1915,6 +1983,336 @@ const KONU_DATA = {
       ]
     },
   ],
+  ayt_ea: [
+    {
+      ders: 'AYT Edebiyat', id: 'ayt-edeb', color: '#d98a6a',
+      konular: [
+        { ad: 'Anlam Bilgisi', star: '🔴' },
+        { ad: 'Dil Bilgisi', star: '🔴' },
+        { ad: 'Güzel Sanatlar ve Edebiyat', star: '🟡' },
+        { ad: 'Metinlerin Sınıflandırılması', star: '🟡' },
+        { ad: 'Şiir Bilgisi', star: '🔴' },
+        { ad: 'Edebi Sanatlar', star: '🔴' },
+        { ad: 'Türk Edebiyatı Dönemleri', star: '🟡' },
+        { ad: 'İslamiyet Öncesi Türk Edebiyatı ve Geçiş Dönemi', star: '🟡' },
+        { ad: 'Halk Edebiyatı', star: '🔴' },
+        { ad: 'Divan Edebiyatı', star: '🔴' },
+        { ad: 'Tanzimat Edebiyatı', star: '🔴' },
+        { ad: 'Servet-i Fünun Edebiyatı', star: '🔴' },
+        { ad: 'Fecr-i Ati Edebiyatı', star: '🟡' },
+        { ad: 'Milli Edebiyat', star: '🔴' },
+        { ad: 'Cumhuriyet Dönemi Edebiyatı', star: '🔴' },
+        { ad: 'Edebiyat Akımları', star: '🟡' },
+        { ad: 'Dünya Edebiyatı', star: '🟢' },
+      ]
+    },
+    {
+      ders: 'AYT Matematik', id: 'ayt-mat', color: '#e8a06a',
+      konular: [
+        { ad: 'Temel Kavramlar', star: '🟡' },
+        { ad: 'Sayı Basamakları', star: '🟡' },
+        { ad: 'Bölme ve Bölünebilme', star: '🟡' },
+        { ad: 'EBOB – EKOK', star: '🟡' },
+        { ad: 'Rasyonel Sayılar', star: '🟡' },
+        { ad: 'Basit Eşitsizlikler', star: '🟡' },
+        { ad: 'Mutlak Değer', star: '🟡' },
+        { ad: 'Üslü Sayılar', star: '🟡' },
+        { ad: 'Köklü Sayılar', star: '🟡' },
+        { ad: 'Çarpanlara Ayırma', star: '🟡' },
+        { ad: 'Oran – Orantı', star: '🟡' },
+        { ad: 'Denklem Çözme', star: '🟡' },
+        { ad: 'Problemler', star: '🔴' },
+        { ad: 'Kümeler', star: '🟡' },
+        { ad: 'Kartezyen Çarpım', star: '🟡' },
+        { ad: 'Mantık', star: '🟡' },
+        { ad: 'Fonksiyonlar', star: '🔴' },
+        { ad: 'Polinomlar', star: '🔴' },
+        { ad: '2. Dereceden Denklemler', star: '🔴' },
+        { ad: 'Permütasyon ve Kombinasyon', star: '🟡' },
+        { ad: 'Binom ve Olasılık', star: '🟡' },
+        { ad: 'İstatistik', star: '🟡' },
+        { ad: 'Karmaşık Sayılar', star: '🟡' },
+        { ad: '2. Dereceden Eşitsizlikler', star: '🔴' },
+        { ad: 'Parabol', star: '🔴' },
+        { ad: 'Trigonometri', star: '🔴' },
+        { ad: 'Logaritma', star: '🔴' },
+        { ad: 'Diziler', star: '🔴' },
+        { ad: 'Limit', star: '🔴' },
+        { ad: 'Türev', star: '🔴' },
+        { ad: 'İntegral', star: '🔴' },
+      ]
+    },
+    {
+      ders: 'AYT Geometri', id: 'ayt-geo', color: '#b07ad9',
+      konular: [
+        { ad: 'Temel Kavramlar', star: '🟡' },
+        { ad: 'Doğruda Açılar', star: '🔴' },
+        { ad: 'Üçgende Açılar', star: '🔴' },
+        { ad: 'Özel Üçgenler — Dik Üçgen', star: '🔴' },
+        { ad: 'Özel Üçgenler — İkizkenar Üçgen', star: '🔴' },
+        { ad: 'Özel Üçgenler — Eşkenar Üçgen', star: '🟡' },
+        { ad: 'Açıortay', star: '🟡' },
+        { ad: 'Kenarortay', star: '🟡' },
+        { ad: 'Üçgende Alan', star: '🔴' },
+        { ad: 'Üçgende Benzerlik', star: '🔴' },
+        { ad: 'Açı – Kenar Bağıntıları', star: '🟡' },
+        { ad: 'Çokgenler', star: '🟡' },
+        { ad: 'Özel Dörtgenler', star: '🔴' },
+        { ad: 'Dörtgenler — Deltoid', star: '🟡' },
+        { ad: 'Dörtgenler — Paralelkenar', star: '🔴' },
+        { ad: 'Dörtgenler — Eşkenar Dörtgen', star: '🟡' },
+        { ad: 'Dörtgenler — Dikdörtgen', star: '🔴' },
+        { ad: 'Dörtgenler — Kare', star: '🔴' },
+        { ad: 'Dörtgenler — İkizkenar Yamuk', star: '🟡' },
+        { ad: 'Dörtgenler — Yamuk', star: '🟡' },
+        { ad: 'Çember ve Daire', star: '🔴' },
+        { ad: 'Analitik Geometri — Noktanın Analitiği', star: '🟡' },
+        { ad: 'Analitik Geometri — Doğrunun Analitiği', star: '🔴' },
+        { ad: 'Analitik Geometri — Dönüşüm Geometrisi', star: '🟡' },
+        { ad: 'Katı Cisimler — Dikdörtgenler Prizması', star: '🟡' },
+        { ad: 'Katı Cisimler — Küp', star: '🟡' },
+        { ad: 'Katı Cisimler — Silindir', star: '🟡' },
+        { ad: 'Katı Cisimler — Piramit', star: '🟡' },
+        { ad: 'Katı Cisimler — Koni', star: '🟡' },
+        { ad: 'Katı Cisimler — Küre', star: '🟡' },
+        { ad: 'Çemberin Analitiği', star: '🔴' },
+      ]
+    },
+    {
+      ders: 'AYT Tarih', id: 'ayt-tar', color: '#e07888',
+      konular: [
+        { ad: 'Tarih ve Zaman', star: '🟡' },
+        { ad: 'İnsanlığın İlk Dönemleri', star: '🟡' },
+        { ad: "Orta Çağ'da Dünya", star: '🟡' },
+        { ad: 'İlk ve Orta Çağlarda Türk Dünyası', star: '🟡' },
+        { ad: 'İslam Medeniyetinin Doğuşu', star: '🟡' },
+        { ad: "Türklerin İslamiyet'i Kabulü ve İlk Türk İslam Devletleri", star: '🟡' },
+        { ad: 'Yerleşme ve Devletleşme Sürecinde Selçuklu Türkiyesi', star: '🟡' },
+        { ad: 'Beylikten Devlete Osmanlı Siyaseti', star: '🔴' },
+        { ad: 'Devletleşme Sürecinde Savaşçılar ve Askerler', star: '🟡' },
+        { ad: 'Beylikten Devlete Osmanlı Medeniyeti', star: '🟡' },
+        { ad: 'Dünya Gücü Osmanlı', star: '🔴' },
+        { ad: 'Sultan ve Osmanlı Merkez Teşkilatı', star: '🔴' },
+        { ad: 'Klasik Çağda Osmanlı Toplum Düzeni', star: '🟡' },
+        { ad: 'Değişen Dünya Dengeleri Karşısında Osmanlı Siyaseti', star: '🔴' },
+        { ad: 'Değişim Çağında Avrupa ve Osmanlı', star: '🔴' },
+        { ad: 'Uluslararası İlişkilerde Denge Stratejisi (1774–1914)', star: '🔴' },
+        { ad: 'Devrimler Çağında Değişen Devlet-Toplum İlişkileri', star: '🟡' },
+        { ad: 'Sermaye ve Emek', star: '🟡' },
+        { ad: 'XIX. ve XX. Yüzyılda Değişen Gündelik Hayat', star: '🟡' },
+        { ad: 'XX. Yüzyıl Başlarında Osmanlı Devleti ve Dünya', star: '🔴' },
+        { ad: 'Milli Mücadele', star: '🔴' },
+        { ad: 'Atatürkçülük ve Türk İnkılabı', star: '🔴' },
+        { ad: 'İki Savaş Arasındaki Dönemde Türkiye ve Dünya', star: '🟡' },
+        { ad: 'II. Dünya Savaşı Sürecinde Türkiye ve Dünya', star: '🟡' },
+        { ad: 'II. Dünya Savaşı Sonrasında Türkiye ve Dünya', star: '🟡' },
+        { ad: 'Toplumsal Devrim Çağında Dünya ve Türkiye', star: '🟡' },
+        { ad: 'XXI. Yüzyılın Eşiğinde Türkiye ve Dünya', star: '🟡' },
+      ]
+    },
+    {
+      ders: 'AYT Coğrafya', id: 'ayt-cog', color: '#58b998',
+      konular: [
+        { ad: 'Ekosistem — Biyoçeşitlilik', star: '🟡' },
+        { ad: 'Ekosistem — Biyomlar', star: '🟡' },
+        { ad: 'Ekosistem — Ekosistemin Unsurları', star: '🟡' },
+        { ad: 'Ekosistem — Enerji Akışı ve Madde Döngüsü', star: '🟡' },
+        { ad: 'Ekosistem — Ekstrem Doğa Olayları', star: '🟡' },
+        { ad: 'Ekosistem — Küresel İklim Değişimi', star: '🔴' },
+        { ad: 'Nüfus Politikaları', star: '🔴' },
+        { ad: "Türkiye'de Nüfus ve Yerleşme", star: '🔴' },
+        { ad: 'Ekonomik Faaliyetler ve Doğal Kaynaklar', star: '🟡' },
+        { ad: 'Göç ve Şehirleşme', star: '🔴' },
+        { ad: "Türkiye'nin Ekonomi Politikaları", star: '🟡' },
+        { ad: "Türkiye Ekonomisinin Sektörel Dağılımı", star: '🟡' },
+        { ad: "Türkiye'de Tarım", star: '🟡' },
+        { ad: "Türkiye'de Hayvancılık", star: '🟡' },
+        { ad: "Türkiye'de Madenler ve Enerji Kaynakları", star: '🟡' },
+        { ad: "Türkiye'de Sanayi", star: '🟡' },
+        { ad: "Türkiye'de Ulaşım", star: '🟡' },
+        { ad: "Türkiye'de Ticaret ve Turizm", star: '🟡' },
+        { ad: 'Geçmişten Geleceğe Şehir ve Ekonomi', star: '🟡' },
+        { ad: "Türkiye'nin İşlevsel Bölgeleri ve Kalkınma Projeleri", star: '🟡' },
+        { ad: 'Hizmet Sektörünün Ekonomideki Yeri', star: '🟡' },
+        { ad: 'Küresel Ticaret', star: '🟡' },
+        { ad: 'Bölgeler — İlk Uygarlıklar', star: '🟡' },
+        { ad: 'Bölgeler — Kültür Bölgeleri ve Türk Kültürü', star: '🟡' },
+        { ad: 'Bölgeler — Sanayileşme: Almanya', star: '🟡' },
+        { ad: 'Bölgeler — Tarım ve Ekonomi (Fransa–Somali)', star: '🟡' },
+        { ad: 'Bölgeler — Ülkeler Arası Etkileşim', star: '🟡' },
+        { ad: 'Bölgeler — Jeopolitik Konum', star: '🟡' },
+        { ad: 'Bölgeler — Çatışma Bölgeleri', star: '🟡' },
+        { ad: 'Bölgeler — Küresel ve Bölgesel Örgütler', star: '🟡' },
+        { ad: 'Çevre — Çevre Sorunları ve Türleri', star: '🟡' },
+        { ad: 'Çevre — Madenler ve Enerji Kaynaklarının Çevreye Etkisi', star: '🟡' },
+        { ad: 'Çevre — Doğal Kaynakların Sürdürülebilir Kullanımı', star: '🟡' },
+        { ad: 'Çevre — Ekolojik Ayak İzi', star: '🟡' },
+        { ad: 'Çevre — Doğal Çevrenin Sınırlılığı', star: '🟡' },
+        { ad: 'Çevre — Çevre Politikaları ve Örgütleri', star: '🟡' },
+        { ad: 'Çevre — Çevre Anlaşmaları', star: '🟡' },
+        { ad: 'Çevre — Doğal Afetler', star: '🔴' },
+      ]
+    },
+  ],
+  ayt_soz: [
+    {
+      ders: 'AYT Edebiyat', id: 'ayt-edeb', color: '#d98a6a',
+      konular: [
+        { ad: 'Anlam Bilgisi', star: '🔴' },
+        { ad: 'Dil Bilgisi', star: '🔴' },
+        { ad: 'Güzel Sanatlar ve Edebiyat', star: '🟡' },
+        { ad: 'Metinlerin Sınıflandırılması', star: '🟡' },
+        { ad: 'Şiir Bilgisi', star: '🔴' },
+        { ad: 'Edebi Sanatlar', star: '🔴' },
+        { ad: 'Türk Edebiyatı Dönemleri', star: '🟡' },
+        { ad: 'İslamiyet Öncesi Türk Edebiyatı ve Geçiş Dönemi', star: '🟡' },
+        { ad: 'Halk Edebiyatı', star: '🔴' },
+        { ad: 'Divan Edebiyatı', star: '🔴' },
+        { ad: 'Tanzimat Edebiyatı', star: '🔴' },
+        { ad: 'Servet-i Fünun Edebiyatı', star: '🔴' },
+        { ad: 'Fecr-i Ati Edebiyatı', star: '🟡' },
+        { ad: 'Milli Edebiyat', star: '🔴' },
+        { ad: 'Cumhuriyet Dönemi Edebiyatı', star: '🔴' },
+        { ad: 'Edebiyat Akımları', star: '🟡' },
+        { ad: 'Dünya Edebiyatı', star: '🟢' },
+      ]
+    },
+    {
+      ders: 'AYT Tarih', id: 'ayt-tar', color: '#e07888',
+      konular: [
+        { ad: 'Tarih ve Zaman', star: '🟡' },
+        { ad: 'İnsanlığın İlk Dönemleri', star: '🟡' },
+        { ad: "Orta Çağ'da Dünya", star: '🟡' },
+        { ad: 'İlk ve Orta Çağlarda Türk Dünyası', star: '🟡' },
+        { ad: 'İslam Medeniyetinin Doğuşu', star: '🟡' },
+        { ad: "Türklerin İslamiyet'i Kabulü ve İlk Türk İslam Devletleri", star: '🟡' },
+        { ad: 'Yerleşme ve Devletleşme Sürecinde Selçuklu Türkiyesi', star: '🟡' },
+        { ad: 'Beylikten Devlete Osmanlı Siyaseti', star: '🔴' },
+        { ad: 'Devletleşme Sürecinde Savaşçılar ve Askerler', star: '🟡' },
+        { ad: 'Beylikten Devlete Osmanlı Medeniyeti', star: '🟡' },
+        { ad: 'Dünya Gücü Osmanlı', star: '🔴' },
+        { ad: 'Sultan ve Osmanlı Merkez Teşkilatı', star: '🔴' },
+        { ad: 'Klasik Çağda Osmanlı Toplum Düzeni', star: '🟡' },
+        { ad: 'Değişen Dünya Dengeleri Karşısında Osmanlı Siyaseti', star: '🔴' },
+        { ad: 'Değişim Çağında Avrupa ve Osmanlı', star: '🔴' },
+        { ad: 'Uluslararası İlişkilerde Denge Stratejisi (1774–1914)', star: '🔴' },
+        { ad: 'Devrimler Çağında Değişen Devlet-Toplum İlişkileri', star: '🟡' },
+        { ad: 'Sermaye ve Emek', star: '🟡' },
+        { ad: 'XIX. ve XX. Yüzyılda Değişen Gündelik Hayat', star: '🟡' },
+        { ad: 'XX. Yüzyıl Başlarında Osmanlı Devleti ve Dünya', star: '🔴' },
+        { ad: 'Milli Mücadele', star: '🔴' },
+        { ad: 'Atatürkçülük ve Türk İnkılabı', star: '🔴' },
+        { ad: 'İki Savaş Arasındaki Dönemde Türkiye ve Dünya', star: '🟡' },
+        { ad: 'II. Dünya Savaşı Sürecinde Türkiye ve Dünya', star: '🟡' },
+        { ad: 'II. Dünya Savaşı Sonrasında Türkiye ve Dünya', star: '🟡' },
+        { ad: 'Toplumsal Devrim Çağında Dünya ve Türkiye', star: '🟡' },
+        { ad: 'XXI. Yüzyılın Eşiğinde Türkiye ve Dünya', star: '🟡' },
+      ]
+    },
+    {
+      ders: 'AYT Coğrafya', id: 'ayt-cog', color: '#58b998',
+      konular: [
+        { ad: 'Ekosistem — Biyoçeşitlilik', star: '🟡' },
+        { ad: 'Ekosistem — Biyomlar', star: '🟡' },
+        { ad: 'Ekosistem — Ekosistemin Unsurları', star: '🟡' },
+        { ad: 'Ekosistem — Enerji Akışı ve Madde Döngüsü', star: '🟡' },
+        { ad: 'Ekosistem — Ekstrem Doğa Olayları', star: '🟡' },
+        { ad: 'Ekosistem — Küresel İklim Değişimi', star: '🔴' },
+        { ad: 'Nüfus Politikaları', star: '🔴' },
+        { ad: "Türkiye'de Nüfus ve Yerleşme", star: '🔴' },
+        { ad: 'Ekonomik Faaliyetler ve Doğal Kaynaklar', star: '🟡' },
+        { ad: 'Göç ve Şehirleşme', star: '🔴' },
+        { ad: "Türkiye'nin Ekonomi Politikaları", star: '🟡' },
+        { ad: "Türkiye Ekonomisinin Sektörel Dağılımı", star: '🟡' },
+        { ad: "Türkiye'de Tarım", star: '🟡' },
+        { ad: "Türkiye'de Hayvancılık", star: '🟡' },
+        { ad: "Türkiye'de Madenler ve Enerji Kaynakları", star: '🟡' },
+        { ad: "Türkiye'de Sanayi", star: '🟡' },
+        { ad: "Türkiye'de Ulaşım", star: '🟡' },
+        { ad: "Türkiye'de Ticaret ve Turizm", star: '🟡' },
+        { ad: 'Geçmişten Geleceğe Şehir ve Ekonomi', star: '🟡' },
+        { ad: "Türkiye'nin İşlevsel Bölgeleri ve Kalkınma Projeleri", star: '🟡' },
+        { ad: 'Hizmet Sektörünün Ekonomideki Yeri', star: '🟡' },
+        { ad: 'Küresel Ticaret', star: '🟡' },
+        { ad: 'Bölgeler — İlk Uygarlıklar', star: '🟡' },
+        { ad: 'Bölgeler — Kültür Bölgeleri ve Türk Kültürü', star: '🟡' },
+        { ad: 'Bölgeler — Sanayileşme: Almanya', star: '🟡' },
+        { ad: 'Bölgeler — Tarım ve Ekonomi (Fransa–Somali)', star: '🟡' },
+        { ad: 'Bölgeler — Ülkeler Arası Etkileşim', star: '🟡' },
+        { ad: 'Bölgeler — Jeopolitik Konum', star: '🟡' },
+        { ad: 'Bölgeler — Çatışma Bölgeleri', star: '🟡' },
+        { ad: 'Bölgeler — Küresel ve Bölgesel Örgütler', star: '🟡' },
+        { ad: 'Çevre — Çevre Sorunları ve Türleri', star: '🟡' },
+        { ad: 'Çevre — Doğal Kaynakların Sürdürülebilir Kullanımı', star: '🟡' },
+        { ad: 'Çevre — Ekolojik Ayak İzi', star: '🟡' },
+        { ad: 'Çevre — Çevre Politikaları ve Örgütleri', star: '🟡' },
+        { ad: 'Çevre — Çevre Anlaşmaları', star: '🟡' },
+        { ad: 'Çevre — Doğal Afetler', star: '🔴' },
+      ]
+    },
+    {
+      ders: 'AYT Felsefe', id: 'ayt-fel', color: '#a78bfa',
+      konular: [
+        { ad: 'Felsefe — Bilgi Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — Varlık Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — Ahlak Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — Sanat Felsefesi', star: '🟢' },
+        { ad: 'Felsefe — Din Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — Siyaset Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — Bilim Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — İlk Çağ Felsefesi', star: '🟡' },
+        { ad: 'Felsefe — MÖ 6. yy – MS 2. yy', star: '🟡' },
+        { ad: 'Felsefe — MS 2. yy – 15. yy', star: '🟡' },
+        { ad: 'Felsefe — 15. yy – 17. yy', star: '🟡' },
+        { ad: 'Felsefe — 18. yy – 19. yy', star: '🟡' },
+        { ad: 'Felsefe — 20. yy Felsefesi', star: '🟡' },
+        { ad: 'Mantık — Mantığa Giriş', star: '🟡' },
+        { ad: 'Mantık — Klasik Mantık', star: '🟡' },
+        { ad: 'Mantık — Mantık ve Dil', star: '🟡' },
+        { ad: 'Mantık — Sembolik Mantık', star: '🟡' },
+        { ad: 'Psikoloji — Psikoloji Bilimini Tanıyalım', star: '🟡' },
+        { ad: 'Psikoloji — Psikolojinin Temel Süreçleri', star: '🟡' },
+        { ad: 'Psikoloji — Öğrenme, Bellek, Düşünme', star: '🟡' },
+        { ad: 'Psikoloji — Ruh Sağlığının Temelleri', star: '🟡' },
+        { ad: 'Sosyoloji — Sosyolojiye Giriş', star: '🟡' },
+        { ad: 'Sosyoloji — Birey ve Toplum', star: '🟡' },
+        { ad: 'Sosyoloji — Toplumsal Yapı', star: '🟡' },
+        { ad: 'Sosyoloji — Toplumsal Değişme ve Gelişme', star: '🟡' },
+        { ad: 'Sosyoloji — Toplum ve Kültür', star: '🟡' },
+        { ad: 'Sosyoloji — Toplumsal Kurumlar', star: '🟡' },
+      ]
+    },
+    {
+      ders: 'AYT Din Kültürü', id: 'ayt-din', color: '#f0b460',
+      konular: [
+        { ad: 'Bilgi ve İnanç', star: '🟡' },
+        { ad: 'Din ve İslam', star: '🟡' },
+        { ad: 'İslam ve İbadet', star: '🟡' },
+        { ad: 'Gençlik ve Değerler', star: '🟢' },
+        { ad: 'İslam Medeniyeti ve Özellikleri', star: '🟡' },
+        { ad: 'Allah İnancı ve İnsan', star: '🟡' },
+        { ad: "Allah'ın Varlığı ve Birliği", star: '🟡' },
+        { ad: "Allah'ın İsim ve Sıfatları", star: '🟡' },
+        { ad: "Kur'an-ı Kerim'de İnsan ve Özellikleri", star: '🟡' },
+        { ad: "İnsanın Allah İle İrtibatı", star: '🟡' },
+        { ad: "Kur'an-ı Kerim'de Gençler", star: '🟢' },
+        { ad: 'Bir Genç Olarak Hz. Muhammed', star: '🟡' },
+        { ad: 'Hz. Muhammed ve Gençler', star: '🟡' },
+        { ad: 'Bazı Genç Sahabeler', star: '🟢' },
+        { ad: 'Din ve Aile', star: '🟡' },
+        { ad: 'Din, Kültür ve Sanat', star: '🟢' },
+        { ad: 'Din ve Çevre', star: '🟢' },
+        { ad: 'Din ve Sosyal Değişim', star: '🟡' },
+        { ad: 'Din ve Ekonomi', star: '🟡' },
+        { ad: 'Din ve Sosyal Adalet', star: '🟡' },
+        { ad: 'İslam Ahlakı', star: '🟡' },
+        { ad: 'Dinî Yorum Farklılıklarının Sebepleri', star: '🟡' },
+        { ad: 'Dinî Yorumlarla İlgili Bazı Kavramlar', star: '🟡' },
+        { ad: 'İslam Düşüncesinde İtikadi ve Siyasi Yorumlar', star: '🟡' },
+        { ad: 'İslam Düşüncesinde Fıkhi Yorumlar', star: '🟡' },
+      ]
+    },
+  ],
   ayt_say: [
     {
       ders: 'AYT Matematik', id: 'ayt-mat', color: '#e8a06a',
@@ -2074,7 +2472,18 @@ const KONU_DATA = {
 
 // ═══════════════════ KONU TAKİP ═══════════════════
 let ktActiveTab = 'tyt';
-let aytProgAlan = 'ayt_say';
+let aytProgAlan = 'ayt_ea';
+
+function setAytProg(alan, btn) {
+  aytProgAlan = alan;
+  document.querySelectorAll('.ayt-prog-btn').forEach(b => {
+    b.style.background = 'var(--surface2)';
+    b.style.color = 'var(--text3)';
+    b.style.borderColor = 'var(--border)';
+  });
+  if (btn) { btn.style.background = 'var(--accent3)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--accent3)'; }
+  renderDashboardProgress();
+}
 
 function ktShowTab(tab, btn) {
   ktActiveTab = tab;
@@ -2153,7 +2562,10 @@ function setNetChartType(type, btn) {
 
 function renderNetChart() {
   const allNets = load('nets');
-  const nets = allNets.filter(n => n.type === netChartType).slice().reverse(); // eskiden yeniye
+  const nets = allNets.filter(n => {
+    if (netChartType === 'tyt') return n.type === 'tyt';
+    return n.type === netChartType || (netChartType === 'ayt_say' && n.type === 'ayt');
+  }).slice().reverse();
   const svg = document.getElementById('dash-net-svg');
   const empty = document.getElementById('dash-net-empty');
   const wrap = document.getElementById('dash-net-chart-wrap');
@@ -2168,7 +2580,7 @@ function renderNetChart() {
   svg.style.display = 'block';
   if (empty) empty.style.display = 'none';
 
-  const fields = netChartType === 'tyt' ? TYT_NETS : AYT_NETS;
+  const fields = netChartType === 'tyt' ? TYT_NETS : getNetFields(netChartType);
   const maxPossible = fields.reduce((a, f) => a + f.max, 0);
 
   const W = svg.parentElement.clientWidth || 600;
@@ -2190,8 +2602,7 @@ function renderNetChart() {
   const py = (v) => PAD.top + cH - ((v - minVal) / range) * cH;
 
   // Renk gradyanı aksen rengiyle
-  const accentColor = netChartType === 'tyt' ? '#4d9fff' : '#6fcf8e';
-  const accentLight = netChartType === 'tyt' ? 'rgba(77,159,255,' : 'rgba(111,207,142,';
+  const accentColor = netChartType === 'tyt' ? '#4d9fff' : netChartType === 'ayt_ea' ? '#d98a6a' : netChartType === 'ayt_soz' ? '#a78bfa' : '#6fcf8e';
 
   // Y eksen grid çizgileri
   const gridCount = 5;
